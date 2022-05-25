@@ -1,0 +1,24 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "category": "availability"
+          }
+        },
+        {
+          "match": {
+            "hostname": "VM1"
+          }
+        }
+      ],
+      "must_not": [],
+      "should": []
+    }
+  },
+  "from": 0,
+  "size": 1000,
+  "sort": [],
+  "aggs": {}
+}

@@ -1,0 +1,37 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "computed_risk": "RED"
+          }
+        },
+        {
+          "match": {
+          "hostname": "VM3"
+          }
+        },
+        {
+          "match": {
+            "category": "traceability"
+          }
+        },
+        {
+          "range": {
+            "utctimestamp": {
+              "gt": "2021-10-26T23:06:00.386908+00:00",
+              "lt": "2021-10-27T12:13:00.215600+00:00"
+            }
+          }
+        }
+      ],
+      "must_not": [ ],
+      "should": [ ]
+    }
+  },
+  "from": 0,
+  "size": 1000,
+  "sort": [ ],
+  "aggs": { }
+}

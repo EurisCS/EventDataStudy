@@ -1,0 +1,12 @@
+{
+  "path_json_query": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/JsonQuery/eventAvailabilityVM1.json",
+  "out_path_data": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/AcquiredData/events_20220502_availability_VM1/",
+  "extension_store": "pickle",
+
+  "host" : "localhost",
+  "port" : "9200",
+  "index_cluster" : "events-20220502",
+  "update_query": false,
+
+  "out_path_file": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/OutFile/test_run_event_3000.json"
+}
