@@ -23,7 +23,7 @@ class ReductionDimensionUmap:
 
         # dict param  (change ?)
         self.dict_param = dict_param
-        if self.dict_param is None:
+        if self.dict_param in [None, '']:
             self.dict_param = {}
 
     def run(self, data_to_transform, output_dimension=3, raw_output_returned=True, column_color=None):

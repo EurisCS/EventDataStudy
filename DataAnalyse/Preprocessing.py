@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.compose import make_column_selector, make_column_transformer
 from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.preprocessing import RobustScaler, OneHotEncoder
@@ -7,20 +8,68 @@ from sklearn.model_selection import train_test_split
 from scipy.sparse import hstack, coo_matrix
 
 
+class loadPreprocessorObjects:
+
+    @staticmethod
+    def load_scaler(scaler):
+        if scaler is not None:
+            scaler = scaler.replace('_', '').replace(' ', '').lower()
+
+        if scaler in ['robust', 'robustscaler', None]:
+            from sklearn.preprocessing import RobustScaler
+            return RobustScaler(quantile_range=(25.0, 75.0))
+
+        if scaler in ['standard', 'standardscaler']:
+            from sklearn.preprocessing import StandardScaler
+            return StandardScaler()
+
+        if scaler in ['minmax', 'minmaxscaler']:
+            from sklearn.preprocessing import MinMaxScaler
+            return MinMaxScaler()
+
+    @staticmethod
+    def load_encoder(encoder):
+        if encoder is not None:
+            encoder = encoder.replace('_', '').replace(' ', '').lower()
+
+        if encoder in ['onehot', 'onehotencoder']:
+            from sklearn.preprocessing import OneHotEncoder
+            return OneHotEncoder()
+        if encoder in ['label', 'labelencoder']:
+            from sklearn.preprocessing import LabelEncoder
+            return LabelEncoder()
+
+    @staticmethod
+    def load_imputer(imputer):
+        if imputer is not None:
+            imputer = imputer.replace('_', '').replace(' ', '').lower()
+
+        if imputer in ['knn', 'knnimputer']:
+            from sklearn.impute import KNNImputer
+            return KNNImputer()
+
+        if imputer in ['simple', 'simpleimputer', None]: # passer None si possible
+            from sklearn.impute import SimpleImputer
+            return SimpleImputer(strategy='constant', fill_value='null')
+
+
 class Preprocessing:
 
     # PREPROCESSORS ################################################################################################
 
     # need to be change the init if you want another preprocessing
-    def __init__(self):
+    def __init__(self, scaler='robust', encoder='onehot', impute_num='knn', impute_cat='simple'):
+
+        loader = loadPreprocessorObjects()
+
         self._num_features = make_column_selector(dtype_include=np.number)
         self._cat_features = make_column_selector(dtype_exclude=np.number)
 
-        self.impute_missing_numerical_value = KNNImputer(),
-        self.impute_missing_categorical_value = SimpleImputer(strategy='constant', fill_value='null'),
+        self.impute_missing_numerical_value = loader.load_imputer(impute_num)
+        self.impute_missing_categorical_value = loader.load_imputer(impute_cat)
 
-        self.scaler = RobustScaler(quantile_range=(25.0, 75.0))
-        self.encoder = OneHotEncoder()
+        self.scaler = loader.load_scaler(scaler)
+        self.encoder = loader.load_encoder(encoder)
 
     def _create_numerical_preprocessor(self):
         numerical_pipeline = make_pipeline(self.impute_missing_numerical_value, self.scaler)
@@ -35,11 +84,13 @@ class Preprocessing:
     def preprocessing_data_unlabelled(self, data, out_format='array'):
 
         numerical_preprocessor = self._create_numerical_preprocessor()
-
         data_num = numerical_preprocessor.fit_transform(data)
 
         categorical_preprocessor = self._create_categorical_preprocessor()
         data_cat = categorical_preprocessor.fit_transform(data)
+
+        if out_format.lower() == 'dataframe':
+            return pd.DataFrame(hstack([coo_matrix(data_num), coo_matrix(data_cat)], format='array'))
 
         return hstack([coo_matrix(data_num), coo_matrix(data_cat)], format=out_format)
 

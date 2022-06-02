@@ -1,53 +1,184 @@
 import pandas as pd
 
+
+# Preparation = extraction + formatting
 class PrepareData:
 
-    def __init__(self):
-        pass
+    def __init__(self, list_features_to_extract=None, list_col_to_convert_to_datetime=None, list_col_to_sort_df=None,
+                 output_type_in_dict_df=True):
+
+        self.list_features_to_extract = list_features_to_extract  # utctimestamp
+        self.list_col_to_convert_to_datetime = list_col_to_convert_to_datetime  # utctimestamp
+        self.list_col_to_sort_df = list_col_to_sort_df  # utctimestamp
+
+        self.output_type_in_dict_df = output_type_in_dict_df
+
+    # extract relevant data and sort them into dict_of_list
+    def INDEV_extract_relevant_system_data_and_sort_it(self, raw_data):
+
+        dict_lists_of_dict_data = dict()
+
+        # the return of the query. each result is a row of the final df.
+        for results in raw_data['hits']['hits']:
+            # multiprocess it
+
+            relevant_name, relevant_data = self.INDEV_select_relevant_data_from_details(results['_source']['details'])
+
+            if relevant_name is not None:
+                dict_extracted_data = self._develop_data_recursively_for_extraction(relevant_data)
+
+                # extract wanted data like timestamp , hostname , source 	...
+                if self.list_features_to_extract is not None:
+                    dict_extracted_data = self.INDEV_extract_features_from_source(results['_source'],
+                                                                                  self.list_features_to_extract,
+                                                                                  dict_extracted_data)
+
+                # append current dict (row) to the good list
+                dict_lists_of_dict_data = self.INDEV_append_dict_to_corresponding_list(relevant_name, dict_extracted_data,
+                                                                                       dict_lists_of_dict_data)
+
+        if self.output_type_in_dict_df:
+            dict_df = self.transform_list_data_to_dataframe(dict_lists_of_dict_data)
+            dict_df = self.INDEV_post_treatment_dataframes(dict_df)
+            return dict_df
+
+        return dict_lists_of_dict_data
+
+    #  EXTRACT ################################################################################################
+
+    # ADD SOME VALUE KEYS
+    @staticmethod
+    def INDEV_select_relevant_data_from_details(details_data):
+        # on imagine qu'il y'a qu'une key à recover dans details
+        list_key = details_data.keys()
+
+        if 'system' in list_key:
+            relevant_key = list(details_data['system'].keys())[0]
+            return relevant_key, details_data['system'][relevant_key]
+
+        if 'monitor' in list_key:
+            pass
+
+        if 'other' in list_key:
+            pass
+
+        return None, None
+
+    @staticmethod
+    def INDEV_extract_features_from_source(source_data, list_features_to_extract, dict_extracted_data):
+        for feature in list_features_to_extract:
+            dict_extracted_data[feature] = source_data[feature]
+        return dict_extracted_data
+
+    def INDEV_extract_timestamp_from_source(self, source_data, dict_extracted_data, timestamp_name='utctimestamp'):
+        return self.INDEV_extract_features_from_source(source_data, [timestamp_name], dict_extracted_data)
+
+    @staticmethod
+    def INDEV_append_dict_to_corresponding_list(relevant_name, dict_extracted_data, dict_lists_of_dict_data):
+
+        if relevant_name not in dict_lists_of_dict_data:
+            dict_lists_of_dict_data[relevant_name] = list()
+
+        dict_lists_of_dict_data[relevant_name].append(dict_extracted_data)
+
+        return dict_lists_of_dict_data
+
+    # POST TREATMENT OPERATIONS #######################################################################################
+
+    def INDEV_post_treatment_dataframes(self, dict_df):
+
+        if type(self.list_col_to_convert_to_datetime) is str:
+            self.list_col_to_convert_to_datetime = [self.list_col_to_convert_to_datetime]
+        if type(self.list_col_to_sort_df) is str:
+            self.list_col_to_sort_df = [self.list_col_to_sort_df]
+
+        for key in dict_df.keys():
+
+            # To datetime
+            if self.list_col_to_convert_to_datetime is not None:
+                dict_df[key] = self.convert_column_to_datetime(dict_df[key])
+
+            # Sort Dfs
+            if self.list_col_to_sort_df is not None:
+                dict_df[key].sort_values(by=self.list_col_to_sort_df, axis=0, inplace=True)
+
+        return dict_df
+
+    def convert_column_to_datetime(self, df):
+        for column in self.list_col_to_convert_to_datetime:
+            series_converted = pd.to_datetime(df[column])
+            df = df.drop(column, axis=1)
+            df = pd.concat([series_converted, df], axis=1)
+
+        return df
 
     #  EXTRACT ################################################################################################
 
     # extract relevant data and sort them into dict_of_list
-    def extract_relevant_data_and_sort_it(self, raw_data, output_dict_df=False):
+    def extract_relevant_system_data_and_sort_it(self, raw_data, list_wanted_features=None,
+                                                 type_output_in_dict_df=True):
 
-        dict_of_list_data = dict()
+        dict_of_list_dict_data = dict()
 
-        for results in raw_data['hits']['hits']:  # the return of the query
+        # the return of the query. each result is a row of the final df.
+        for results in raw_data['hits']['hits']:
 
-            dict_data_system = results['_source']['details']['system']  # system info are relevant
+            current_data = results['_source']
 
-            for system_name in list(dict_data_system.keys()):  # one key expected, the loop is for security code
+            # extract system data
+            system_name, dict_extracted_data = self._extract_system_data(current_data['details']['system'])
 
-                if system_name not in dict_of_list_data:  # add into the dict_final if no exist
-                    dict_of_list_data[system_name] = list()
+            # extract wanted data like timestamp , hostname , source 	...
+            if list_wanted_features:
+                dict_extracted_data = \
+                    self.extract_wanted_features(current_data, list_wanted_features, dict_extracted_data)
 
-                extracted_data = self._recursive_sort_data(dict_data_system[system_name])  # extract data recursively
-                dict_of_list_data[system_name].append(extracted_data)  # and append to dict_final
+            # append current dict (row) to the good list
+            if system_name not in dict_of_list_dict_data:
+                dict_of_list_dict_data[system_name] = list()
+            dict_of_list_dict_data[system_name].append(dict_extracted_data)
 
-        if output_dict_df:
-            return self.transform_list_data_to_dataframe(dict_of_list_data)
+        if type_output_in_dict_df:
+            return self.transform_list_data_to_dataframe(dict_of_list_dict_data)
 
-        return dict_of_list_data
+        return dict_of_list_dict_data
+
+    def _extract_system_data(self, dict_data_system):
+
+        # only one increment expected. loop used for avoid unexpected mistake
+        system_name = list(dict_data_system.keys())[0]
+
+        # extract data recursively and append to dict_final
+        dict_extracted_data = self._develop_data_recursively_for_extraction(dict_data_system[system_name])
+
+        return system_name, dict_extracted_data
 
     # goes back through dict of dict and create feature name foreach value found
-    def _recursive_sort_data(self, current_object, name_feature=''):
+    def _develop_data_recursively_for_extraction(self, current_dict, name_feature=''):
 
-        dict_result = dict()
+        dict_final = dict()
 
-        if type(current_object) is dict:
-            for key, new_obj in current_object.items():
-                dict_result.update(self._recursive_sort_data(new_obj, f'{name_feature}{key}_'))
-                # update can delete field. in theory, not twice the same field
+        if type(current_dict) is dict:
+            for key, new_obj in current_dict.items():
+                dict_final.update(self._develop_data_recursively_for_extraction(new_obj, f'{name_feature}{key}_'))
+                # update can delete field. in theory, we don't have twice the same field
         else:
-            dict_result[name_feature[:-1]] = current_object
+            dict_final[name_feature[:-1]] = current_dict
 
-        return dict_result
+        return dict_final
+
+    @staticmethod
+    def extract_wanted_features(current_data, list_wanted_features, dict_extracted_data):
+
+        for wanted_feature in list_wanted_features:
+            dict_extracted_data[wanted_feature] = current_data[wanted_feature]
+
+        return dict_extracted_data
 
     #  TRANSFORM ################################################################################################
 
     @staticmethod
     def transform_list_data_to_dataframe(dict_of_list_data):
-
         dict_df = dict()
 
         for key, list_data in dict_of_list_data.items():
@@ -63,8 +194,6 @@ class PrepareData:
             dict_df[key] = 'here the pyspark_frame from list_data'
 
         return dict_df
-
-
 
 
 # U_TEST ################################################################################################

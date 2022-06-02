@@ -2,6 +2,15 @@ import re
 import pickle
 import os
 
+# DIRECTORY ################################################################################################
+
+
+def create_directory(path_directory):
+    if not os.path.exists(path_directory):
+        os.mkdir(path_directory)
+
+# FILES ################################################################################################
+
 
 def store_object_as_pickle(object_to_store, save_path):
     save_path = add_extension(save_path, "pickle")
@@ -22,6 +31,8 @@ def open_pickle_object(path_file):
         print(f'impossible to open the object with the path : {path_file}\n===> None returned ==> {err}')
         return None
 
+# EXTENSION ################################################################################################
+
 
 def add_extension(path_file, extension_without_the_dot):
     search = re.search(f"\.{extension_without_the_dot}", path_file)
@@ -35,14 +46,17 @@ def check_extension(path_file, extension_without_the_dot):
         return False
     return True
 
+
 def get_name_file_into_path(path):
     basename = os.path.basename(path)
     return os.path.splitext(basename)[0]
 
 
+# get the extension with the dot
 def get_extension_into_path(path):
     root, extension = os.path.splitext(path)
     return extension
+
 
 def get_path_without_extension(path):
     root, extension = os.path.splitext(path)

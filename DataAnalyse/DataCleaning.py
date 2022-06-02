@@ -5,15 +5,53 @@ class CleanData:
 
     def __init__(self):
         self.toolbox = CleanDataToolBox()
+        self.report = dict()
 
-    def drop_bad_row_and_columns(self, data, threshold_na_column, threshold_na_row):
+    def __call__(self, data, columns_to_save_out, columns_to_delete,
+                 threshold_na_in_column=0.5, threshold_na_in_row=0.2,
+                 reset_index=True):
+
+        self.report = dict()
+        self.report['init_shape'] = str(data.shape)
+
+        if reset_index:
+            data = data.reset_index(drop=True)
+
+        # drop bad rows and columns
+        data = self.drop_bad_row_and_columns(data, threshold_na_in_column, threshold_na_in_row)
+
+        # drop data to save && delete data to delete
+        data, saved_data = self.save_and_drop_columns(data, columns_to_save_out, columns_to_delete)
+
+        self.report['saved_data'] = str(saved_data.shape)
+
+        return data, saved_data
+
+    def save_and_drop_columns(self, data, columns_to_save_out, columns_to_delete):
+
+        # drop data to save
+        data, saved_data = self.toolbox.split_data_from_list(data, columns_to_save_out)
+
+        self.report['column_to_saves'] = str(data.shape)
+
+        # delete data to delete
+        data, __ = self.toolbox.split_data_from_list(data, columns_to_delete)
+
+        self.report['columns_to_delete'] = str(data.shape)
+
+        return data, saved_data
+
+    def drop_bad_row_and_columns(self, data, threshold_na_in_column, threshold_na_in_row):
 
         # drop columns by checking Nan & constants
-        data = self.toolbox.delete_bad_columns(data, threshold_na_column)
+        data = self.toolbox.drop_na_and_constants_columns(data, threshold_na_in_column)
+        self.report['drop_na_and_constants_columns'] = str(data.shape)
 
         data = self.toolbox.drop_duplicates_row(data)  # drop duplicates rows
+        self.report['drop_duplicates_row'] = str(data.shape)
 
-        data = self.toolbox.drop_row_with_na(data, threshold_na_row)  # drop rows by checking Nan
+        data = self.toolbox.drop_row_with_na(data, threshold_na_in_row)  # drop rows by checking Nan
+        self.report['drop_na_row'] = str(data.shape)
 
         return data
 
@@ -22,7 +60,30 @@ class CleanDataToolBox:
 
     # COLUMNS TREATMENT ############################################################################################
 
-    def delete_bad_columns(self, data, threshold_na=0.5):
+    @staticmethod
+    def split_data_from_list(data, list_data_to_drop):
+
+        if list_data_to_drop is not None:
+
+            if type(list_data_to_drop) is str:
+                list_data_to_drop = [list_data_to_drop]
+
+            # split
+            try:
+                data_dropped = data[list_data_to_drop]
+                data = data.drop(list_data_to_drop, axis=1)
+
+                if data_dropped.shape[1] == 0:   # check data dropped
+                    return data, pd.DataFrame()
+
+                return data, data_dropped
+
+            except KeyError:
+                return data, pd.DataFrame()
+
+        return data, pd.DataFrame()
+
+    def drop_na_and_constants_columns(self, data, threshold_na=0.5):
         set_drop = set()
 
         for column_name in data.columns:
@@ -65,15 +126,18 @@ class CleanDataToolBox:
 
     # TO TEST
     @staticmethod
-    def drop_row_with_na(self, data, threshold=0.2):
+    def drop_row_with_na(data, threshold=0.2):
         list_drop = []
         for index in range(data.shape[0]):
-            list_values = list(data.loc[index])
-            if list_values.count(None) / len(list_values) >= threshold:
-                list_drop.append(index)
+            list_values = list(data.iloc[index])
+            if list_values:
+                if (list_values.count(None) / len(list_values)) >= threshold:
+                    list_drop.append(index)
 
         return data.drop(list_drop, axis=0)
 
+
+# NOT IN DEV / NOT USED ############################################################################################
 
 class CleanDataSandBox:
 
@@ -128,22 +192,7 @@ class CleanDataSandBox:
 
         data_cleaned = data.copy()
         for value_unwanted in list_unwanted_value:
-            lines_index_to_drop = df[df[column_name] == value_unwanted].index
+            lines_index_to_drop = data_cleaned[data_cleaned[column_name] == value_unwanted].index
             data_cleaned.drop(lines_index_to_drop, inplace=True)
 
         return data_cleaned
-
-
-#######################
-# test main
-path = "/DataStorage/Results/analyzer-events-202106_alert_query.csv"
-df = pd.read_csv(path)
-print(df.head())
-list_unwanted_values = ['1gCdv3wBalp6tMCodniH', 'hQCpv3wBalp6tMCoXXnW']
-
-data_clean = PrepareData().drop_row_that_contain_unwanted_values(df, 'alert_id', list_unwanted_values)
-
-if data_clean.shape[0] == df.shape[0] - 2:
-    print(True)
-else:
-    print(False)

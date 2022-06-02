@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('/home/eguimard/PycharmProjects/DataStudy/')
 sys.path.append('/home/eguimard/PycharmProjects/DataStudy/Utilities')
 sys.path.append('/home/eguimard/PycharmProjects/DataStudy/DataAcquisition')
@@ -34,8 +35,7 @@ class DataAcquisition:
     def console_parse_args():
         parser = argparse.ArgumentParser(description='pipeline for store data')
 
-        parser.add_argument('-sf', '--setup_file', default=None, required=False, help='setup file for launch')
-
+        parser.add_argument('-sf', '--setup_file', help='setup file for launch', default=None, required=False)
 
         parser.add_argument('-pjson', '--path_json_query', help="path of the json query", required=False)
         parser.add_argument('-opd', '--out_path_data', help="define the out_path of data_store", required=False)
@@ -44,10 +44,13 @@ class DataAcquisition:
         parser.add_argument('-host', '--host', help="host of the elastic cluster", required=False)
         parser.add_argument('-port', '--port', help="port of the elastic cluster", required=False)
         parser.add_argument('-index', '--index_cluster', help="index in the elastic cluster ", required=False)
-        parser.add_argument('-uq', '--update_query', default=None, required=False, help='setup file for launch')
+        parser.add_argument('-uq', '--update_query', help='setup file for launch', default=None, required=False)
 
-        parser.add_argument('-opf', '--out_path_file', help="define a path to create an ouftile of the run",
-                            required=False)
+        parser.add_argument('-lf', '--list_features_to_extract', default=None, required=False,
+                            help='list of wanted feature to get' )
+
+        parser.add_argument('-opf', '--out_path_file',
+                            help="define a path to create an outfile of the run",required=False)
 
         return vars(parser.parse_args())
 
