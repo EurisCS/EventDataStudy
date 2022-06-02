@@ -1,0 +1,2 @@
+
+{"query":{"bool":{"must":[{"match":{"category":"traceability"}},{"match":{"hostname":"VM1"}}],"must_not":[],"should":[]}},"from":0,"size":250,"sort":[],"aggs":{}}
