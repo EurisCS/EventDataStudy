@@ -6,7 +6,7 @@ sys.path.append('/home/eguimard/PycharmProjects/DataStudy/DataAnalyse')
 import argparse
 from time import time
 from Utilities.JsonFunctions import load_json_file, store_json_file
-from DataAnalyse.PipelineDataAnalyse import PipelineDataAnalyse
+from PipelineDataAnalyse import PipelineDataAnalyse
 
 
 class DataAnalye:
@@ -23,19 +23,19 @@ class DataAnalye:
 
         # take out this for the instantiation
         in_path_data_directory = dict_args.pop('in_path_data_directory')
-        save_path_data = dict_args.pop('save_path_data')
+        save_path = dict_args.pop('save_path')
 
         # run
         T_start = time()
         output_of_the_pipeline = \
-            self.pipeline_to_run(**dict_args).pipeline_multiple_df(in_path_data_directory, save_path_data)
+            self.pipeline_to_run(**dict_args).pipeline_multiple_df(in_path_data_directory, save_path)
         time_exec = time() - T_start
 
         # outfile
         if self.out_path_file is not None:
             self.create_and_store_out_file(dict_args, output_of_the_pipeline, time_exec)
 
-        print(f"data stored at the path : {save_path_data}")
+        print(f"\ndata stored at the path : {save_path}")
 
     @staticmethod
     def console_parse_args():

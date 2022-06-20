@@ -10,8 +10,7 @@ class ElasticAPI:
             self.client = Elasticsearch(f'{host}:{port}')
         except ConnectionError:  # check the except
             self.client = None
-        else: # may be bad information
-            print('connected')
+
     # SOME UTILITIES AND GETTING-INFO WITH ELASTIC CLUSTER  ####################################################
 
     def __enter__(self):
@@ -25,9 +24,11 @@ class ElasticAPI:
 
     # QUERY EXECUTE  ################################################################################################
 
-    def get_raw_data_from_json_query_and_update_query(self, index, path_json_query, update_query=True):
+    def get_raw_data_from_json_query_and_update_query(self, index, path_json_query,from_=0,size=10000,
+                                                      update_query=True):
+
         str_json_query = load_json_file(path_json_query)
-        raw_data = self.client.search(index=index, body=str_json_query)
+        raw_data = self.client.search(index=index, body=str_json_query,from_=from_, size=size)
 
         if update_query:
             self.update_json_query_from_now(str_json_query, path_json_query)
@@ -35,6 +36,7 @@ class ElasticAPI:
         return raw_data
 
     def get_raw_data_from_json_query(self, index, path_json_query):
+
         str_json_query = load_json_file(path_json_query)
         return self.client.search(index=index, body=str_json_query)
 

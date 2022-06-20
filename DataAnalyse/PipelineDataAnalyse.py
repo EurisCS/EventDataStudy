@@ -1,15 +1,12 @@
-from Preprocessing import Preprocessing
+from DataManagement.ManagementDataFramesPandas import ManageDataFrames
 from DataCleaning import CleanData
-from DataVisualisation import VisualiseDataPlotlyExpress, VisualiseDataPlotlyGo
+from Preprocessing import Preprocessing
+from DataVisualisation import VisualiseDataPlotlyExpress
 from ReductionDimension import ReductionDimensionUmap
-from DataManagement.PandasFrameManagement import ManageDataFrames
+from DataClustering import UnsupervisedLearning
 
 from Utilities.FileManipulation import create_directory
-from Utilities.ErrorManagement import ErrorManagement
 from Utilities.JsonFunctions import store_json_file
-
-
-# from StatisticAnalyse import CorrelationTest
 
 
 # Non setup Args ::
@@ -17,151 +14,165 @@ from Utilities.JsonFunctions import store_json_file
 # Preprocessing : impute_missing_numerical_value, impute_missing_categorical_value, scaler, encoder
 # DataVis :  marginal_x=None, marginal_y=None,
 
-
-# TO DO ::
+## PROBLEMS
+#  LA SERIE TIMESTAMP S'ARRONDI A LA MINUTE POUR LE scatter_timestamp_3D
 #
-# rajouter axe bloqué et gerer le pblm de changement de dimension quand on ajoute un/ des axes bloqué
+# PROBLEME DE LOGIQUE DANS CLEAN DATA : DROP ROW WITH NA NE FONCITONNE PAS SI = 0.99
+#   --> CAR ON VERIFIE DES COLONNE COMME TS_SERIES ou SEVERITY
+
+
+## TO DO
+# indicateurs du meilleurs clustering
+# Possibilitée de clusteriser sur les données réduites 2D 3D etc...
+
 
 class PipelineDataAnalyse:
 
     def __init__(self, dict_param_clean_data, dict_param_preprocessing,
                  extension_data='pickle', extension_figure='html',
                  algorithm_reduction_dimension='umap', dict_param_reduction_dimension=None,
-                 scatter_matrix=True, scatter_features=False, heatmap=False, scatter_1D=False, scatter_2D=False,
+                 list_algorithm_clustering='hdbscan', list_dict_param_clustering=None,
+
+                 list_name_column_color_name=None, timestamp_column_name=None,
+                 make_clustering=False,
+                 scatter_2D=False,
                  scatter_3D=False,
-                 scatter_ternary=False, scatter_2D_timestamp=False, scatter_3D_timestamp=False,
-                 histogram_timestamp=None):
-
-        """
-            :param dict_param_clean_data: parameter for the main function in Clean Data Module
-            :param extension_data:  extension of the data will be save (csv, pickle, ...)
-            :param extension_figure: extension of the figure will be save (html, png, ...)
-            :param algorithm_reduction_dimension: method used for r_dim (umap, parametric_umap, ...)
-            :param dict_param_reduction_dimension: dict param for the r_dim
-            :param scatter_matrix: if you want to create a scatter matrix
-            :param heatmap: if you want to create a heatmap correlation features
-            :param scatter_2D:  if you want to create a 2D plot ( created after a reduction dimension of the dataset )
-            :param scatter_3D: if you want to create a 3D plot ( created after a reduction dimension of the dataset )
-
-            :param scatter_ternary: if you want to create a 3D plot ( created after a reduction dimension of the dataset )
-            :param scatter_2D_timestamp: if you want to create a 2D plot with x the timestamp axe. !!
-                timestamp axe need to be the first column in saved data arg in the clean_data dict_param
-            :param scatter_3D_timestamp: if you want to create a 3D plot with x the timestamp axe. !!
-                timestamp axe need to be the first column in saved data arg in the clean_data dict_param
-        """
+                 scatter_ternary=False,
+                 scatter_matrix=True,
+                 scatter_2D_timestamp=False,
+                 scatter_3D_timestamp=False,
+                 scatter_features_timestamp=False,
+                 histogram_timestamp=False,
+                 heatmap_correlation=False):
 
         # load objects for treatment
+        self.data_manager = ManageDataFrames()
         self.cleaner = CleanData()
         self.preprocessor = Preprocessing(**dict_param_preprocessing)
         self.visualiser = VisualiseDataPlotlyExpress()
-        self.visualiser_go = VisualiseDataPlotlyGo()
-        self.data_manager = ManageDataFrames()
-        self.error_manager = ErrorManagement()
-
         # set up the reducer
-        if scatter_3D or scatter_2D:
-            self.reducer = ReductionDimensionUmap(algorithm_reduction_dimension, dict_param_reduction_dimension)  # V
+        if True in [scatter_2D, scatter_3D, scatter_ternary, scatter_2D_timestamp, scatter_3D_timestamp,
+                    histogram_timestamp]:
+            self.reducer = ReductionDimensionUmap(algorithm_reduction_dimension, dict_param_reduction_dimension)
+
+        self.list_name_clustering = list_algorithm_clustering
+        if type(self.list_name_clustering) in [str, None]:
+            self.list_name_clustering = [self.list_name_clustering]
+
+        self.list_dict_param_clustering = list_dict_param_clustering
+        if type(self.list_dict_param_clustering) in [dict, None]:
+            self.list_dict_param_clustering = [self.list_dict_param_clustering]
 
         self.dict_param_clean_data = dict_param_clean_data
+
+        # in saved data
+        self.timestamp_column_name = timestamp_column_name
+
+        # in saved data
+        if type(list_name_column_color_name) is str:
+            list_name_column_color_name = [list_name_column_color_name]
+        self.list_name_column_color_name = list_name_column_color_name
+
+        # dict of series color/label
+        self.dict_series_color = {'uncolored': None}
 
         # extension save
         self.extension_data = extension_data
         self.extension_fig = extension_figure
 
         # chose program
-        self.scatter_matrix = scatter_matrix
-        self.scatter_features = scatter_features  # PROBLEMATIQUE POUR LES VARIABLES CATEGORIELLE ?
-        self.heatmap = heatmap
-        self.scatter_1D = scatter_1D
+        self.make_clustering = make_clustering
+
         self.scatter_2D = scatter_2D
         self.scatter_3D = scatter_3D
         self.scatter_ternary = scatter_ternary
+        self.scatter_matrix = scatter_matrix
         self.scatter_2D_timestamp = scatter_2D_timestamp
         self.scatter_3D_timestamp = scatter_3D_timestamp
+        self.scatter_features_timestamp = scatter_features_timestamp
         self.histogram_timestamp = histogram_timestamp
+        self.heatmap_correlation = heatmap_correlation
 
-    # PIPELINES ################################################################################################
+    def pipeline_multiple_df(self, in_path_data_directory, save_path_root):
 
-    def pipeline_multiple_df(self, in_path_data_directory, save_path_data_root):
-        """
-        :param in_path_data_directory:  path of the directory where the df to load are stored
-        :param save_path_data_root: path where the new dfs were store
-        :return: None
-        """
+        create_directory(save_path_root)
 
-        dict_df_input = ManageDataFrames().load_dict_df(in_path_data_directory)  # load dfs
-        create_directory(save_path_data_root)
+        # load dfs
+        dict_df_input = ManageDataFrames().load_dict_df(in_path_data_directory)
 
         # multiprocessing to setup
         for name_df in dict_df_input.keys():
-            current_save_path_data = f'{save_path_data_root}/{name_df}'
+            self.pipeline_one_df(dict_df_input[name_df], f'{save_path_root}/{name_df}')
 
-            create_directory(current_save_path_data)
+    def pipeline_one_df(self, input_data, save_path):
 
-            self.pipeline_one_df(dict_df_input[name_df], current_save_path_data)
+        create_directory(save_path)
 
-            store_json_file(self.cleaner.report, f'{current_save_path_data}/report_clean_data.json')
+        dict_data = self.run_dataframe_treatment(input_data, f'{save_path}/data')
 
-    def pipeline_one_df(self, input_data, save_path_data):
+        self.run_global_figure_creation(dict_data, f'{save_path}/global_figures')
 
-        cleaned_data, saved_data = self.clean_data_and_store_data_to_save(input_data, save_path_data)
+        for label in self.dict_series_color.keys():
+            self.run_figure_creation(dict_data, self.dict_series_color[label], f'{save_path}/{label}')
 
-        preprocessed_data = self.preprocess_and_store_data(cleaned_data, save_path_data)
+        store_json_file(self.cleaner.report, f'{save_path}/report_clean_data.json')
 
-        if self.scatter_matrix:
-            self.make_scatter_matrix(cleaned_data, save_path_data)
+    # PIPELINE : DATA TREATMENT ######################################################################################
 
-        if self.scatter_features:
-            self.make_scatter_features(saved_data.iloc[:, 0], preprocessed_data, save_path_data)
+    def run_dataframe_treatment(self, input_data, save_path_data):
 
-        if self.heatmap:
-            self.make_heatmap_correlation(cleaned_data, save_path_data)
+        create_directory(save_path_data)
 
-        if self.scatter_1D or self.scatter_2D_timestamp or self.histogram_timestamp:
+        dict_data = dict()
 
-            reduced_1D_data = self.run_reduction_dimension_and_store_data(preprocessed_data, 1, save_path_data)
+        dict_data['cleaned_data'], dict_data['saved_data'] = \
+            self.clean_data_and_store_data_to_save(input_data, save_path_data)
 
-            if self.scatter_1D:
-                self.make_scatter_plot(reduced_1D_data, save_path_data)
+        if self.timestamp_column_name is not None:
+            dict_data['timestamp_series'] = dict_data['saved_data'][self.timestamp_column_name]
 
-            if self.scatter_2D_timestamp:
-                self.make_scatter_line(saved_data.iloc[:, 0], reduced_1D_data.iloc[:, 0], None, save_path_data)
+        if self.list_name_column_color_name is not None:
+            for name_column in self.list_name_column_color_name:
+                self.dict_series_color[name_column] = dict_data['saved_data'][name_column]
 
-            if self.histogram_timestamp:
-                self.make_histogram(saved_data.iloc[:, 0], reduced_1D_data.iloc[:, 0], save_path_data)
+        dict_data['preprocessed_data'] = \
+            self.preprocess_and_store_data(dict_data['cleaned_data'], save_path_data)
+
+        if self.make_clustering:
+            for cluster_name, dict_param in zip(self.list_name_clustering, self.list_dict_param_clustering):
+                self.dict_series_color[cluster_name] = self.run_clustering(cluster_name, dict_param,
+                                                                           dict_data['preprocessed_data'])
+
+        if self.scatter_2D_timestamp or self.histogram_timestamp:
+            dict_data['reduced_1D_data'] = self.run_reduction_dimension_and_store_data(dict_data['preprocessed_data'],
+                                                                                       1, save_path_data)
 
         if self.scatter_2D or self.scatter_3D_timestamp:
+            dict_data['reduced_2D_data'] = self.run_reduction_dimension_and_store_data(dict_data['preprocessed_data'],
+                                                                                       2, save_path_data)
 
-            reduced_2D_data = self.run_reduction_dimension_and_store_data(preprocessed_data, 2, save_path_data)
-
-            if self.scatter_2D:
-                self.make_scatter_plot(reduced_2D_data, save_path_data)
-
-            if self.scatter_3D_timestamp:
-                self.make_scatter_line(saved_data.iloc[:, 0], reduced_2D_data.iloc[:, 0],
-                                       reduced_2D_data.iloc[:, 1], save_path_data)
-
-        # need to add data not treated
         if self.scatter_3D or self.scatter_ternary:
+            dict_data['reduced_3D_data'] = self.run_reduction_dimension_and_store_data(dict_data['preprocessed_data'],
+                                                                                       3, save_path_data)
+        if self.heatmap_correlation:
+            dict_data['data_correlation_matrix'] = dict_data['cleaned_data'].corr(method='pearson')
+            self.data_manager.store_df(dict_data['data_correlation_matrix'],
+                                       f'{save_path_data}/data_correlation_matrix', self.extension_data, False)
 
-            reduced_3D_data = self.run_reduction_dimension_and_store_data(preprocessed_data, 3, save_path_data)
+        return dict_data
 
-            if self.scatter_3D:
-                self.make_scatter_plot(reduced_3D_data, save_path_data)
-
-            if self.scatter_ternary:
-                self.make_scatter_ternary(reduced_3D_data, save_path_data)
-
-    # DATA TREATMENT ################################################################################################
+    # FUNCTIONS : DATA TREATMENT ######################################################################################
 
     def clean_data_and_store_data_to_save(self, input_data, save_path_data):
 
         cleaned_data, data_to_save = self.cleaner(input_data, **self.dict_param_clean_data)
 
-        if data_to_save is not None:
-            self.data_manager.store_df(data_to_save, f'{save_path_data}/saved_data', self.extension_data)
+        self.data_manager.store_df(cleaned_data, f'{save_path_data}/cleaned_data', self.extension_data, False)
 
-        return cleaned_data, data_to_save
+        if data_to_save is not None:
+            self.data_manager.store_df(data_to_save, f'{save_path_data}/saved_data', self.extension_data, False)
+
+        return cleaned_data, data_to_save,
 
     def preprocess_and_store_data(self, cleaned_data, save_path_data):
 
@@ -169,7 +180,7 @@ class PipelineDataAnalyse:
         preprocessed_data = self.preprocessor.preprocessing_data_unlabelled(cleaned_data, out_format='dataframe')
 
         # store
-        self.data_manager.store_df(preprocessed_data, f'{save_path_data}/preprocessed_data', self.extension_data)
+        self.data_manager.store_df(preprocessed_data, f'{save_path_data}/preprocessed_data', self.extension_data, False)
 
         return preprocessed_data
 
@@ -178,54 +189,140 @@ class PipelineDataAnalyse:
         reduced_data = self.reducer.run(data_to_reduce, output_dimension=dimension, raw_output_returned=False)
 
         if save_path_data is not None:
-            self.data_manager.store_df(reduced_data, f'{save_path_data}/reduced_{dimension}D_data', self.extension_data)
+            self.data_manager.store_df(reduced_data, f'{save_path_data}/reduced_{dimension}D_data',
+                                       self.extension_data, False)
 
         return reduced_data
 
-    # FIGURE CREATION ###################################################################################
+    @staticmethod
+    def run_clustering(cluster_name, dict_param, preprocessed_data):
+        return UnsupervisedLearning(cluster_name, dict_param).fit_predict(preprocessed_data)
 
-    # oo D
-    def make_heatmap_correlation(self, cleaned_data, save_path_data):
+    # PIPELINE : FIGURE CREATION ######################################################################################
 
-        correlated_data = cleaned_data.corr(method='pearson')
+    def run_global_figure_creation(self, dict_data, save_path):
 
-        self.data_manager.store_df(correlated_data, f'{save_path_data}/correlated_data', self.extension_data)
+        create_directory(save_path)
 
-        self.visualiser.create_heatmap(correlated_data, f'{save_path_data}/heatmap_correlation.{self.extension_fig}')
+        if self.heatmap_correlation:
+            self.make_heatmap_correlation(dict_data['data_correlation_matrix'], save_path)
 
-    # oo D
-    def make_scatter_matrix(self, preprocessed_data, save_path_data):
-        self.visualiser.create_scatter_matrix(preprocessed_data,
-                                              save_path=f'{save_path_data}/scatter_matrix.{self.extension_fig}')
+        if self.scatter_features_timestamp:
+            self.make_scatter_features_timestamp(dict_data['timestamp_series'], dict_data['preprocessed_data'], save_path)
+
+        '''
+            
+            
+        if self.dataframe_figure:
+            self.make_dataframe_figure(dict_data['cleaned_data'], save_path)
+        '''
+
+    def run_figure_creation(self, dict_data, series_color, save_path):
+
+        create_directory(save_path)
+
+        print(f'TYPE_SERIES_COLOR : {type(series_color)}')
+
+        if self.scatter_2D:
+            self.make_scatter_plot_2D(dict_data['reduced_2D_data'], series_color, save_path)
+
+        if self.scatter_3D:
+            self.make_scatter_plot_3D(dict_data['reduced_3D_data'], series_color, save_path)
+
+        if self.scatter_ternary:
+            self.make_scatter_plot_ternary(dict_data['reduced_3D_data'], series_color, save_path)
+
+        if self.scatter_matrix:
+            self.make_scatter_matrix(dict_data['cleaned_data'], series_color, save_path)
+
+        if self.scatter_2D_timestamp:
+            self.make_scatter_timestamp_2D(dict_data['timestamp_series'], dict_data['reduced_1D_data'], series_color,
+                                           save_path)
+            self.make_scatter_timestamp_2D_continuous(dict_data['timestamp_series'], dict_data['reduced_1D_data'],
+                                                      series_color, save_path)
+
+        if self.scatter_3D_timestamp:
+            self.make_scatter_timestamp_3D(dict_data['timestamp_series'], dict_data['reduced_2D_data'], series_color,
+                                           save_path)
+
+        if self.histogram_timestamp:
+            self.make_histogram_timestamp(dict_data['timestamp_series'], dict_data['reduced_1D_data'], series_color,
+                                          save_path)
+        '''
+            if self.histogram_features:
+                self.make_histogram_features()
+        '''
+    # FUNCTIONS : FIGURE CREATION ###################################################################################
 
     # 2D
-    def make_scatter_features(self, series_x, data_y, save_path_data):
-        self.visualiser_go.create_multiple_scatter_line(series_x, data_y, save_path=
-        f'{save_path_data}/scatter_features_2D_timestamp.{self.extension_fig}')
-
-    # 1D 2D 3D
-    def make_scatter_plot(self, data_to_plot, save_path_data):
-        self.visualiser.create_automatic_scatter_plot(
-            data_to_plot, save_path=f'{save_path_data}/scatter_{data_to_plot.shape[1]}D.{self.extension_fig}')
-
-    # 2D
-    def make_histogram(self, x_series, y_series, save_path_data):
-        self.visualiser.create_histogram(x_series, y_series,
-                                         f'{save_path_data}/histogram_timestamp.{self.extension_fig}')
+    def make_scatter_plot_2D(self, reduced_2D_data, series_color, save_path):
+        self.visualiser.create_scatter_plot_2D(reduced_2D_data.iloc[:, 0],
+                                               reduced_2D_data.iloc[:, 1],
+                                               series_color,
+                                               f'{save_path}/scatter_plot_2D.{self.extension_fig}')
 
     # 3D
-    def make_scatter_ternary(self, reduced_3D_data, save_path_data):
-        self.visualiser.create_scatter_ternary(reduced_3D_data,
-                                               save_path=f'{save_path_data}/scatter_ternary.{self.extension_fig}')
+    def make_scatter_plot_3D(self, reduced_3D_data, series_color, save_path):
+        self.visualiser.create_scatter_plot_3D(reduced_3D_data.iloc[:, 0],
+                                               reduced_3D_data.iloc[:, 1],
+                                               reduced_3D_data.iloc[:, 2],
+                                               series_color,
+                                               f'{save_path}/scatter_plot_3D.{self.extension_fig}')
 
-    # 2D 3D
-    def make_scatter_line(self, x_series, y_series, z_series, save_path_data):
+    # 2D
+    def make_scatter_plot_ternary(self, reduced_3D_data, series_color, save_path):
+        self.visualiser.create_scatter_ternary(reduced_3D_data.iloc[:, 0],
+                                               reduced_3D_data.iloc[:, 1],
+                                               reduced_3D_data.iloc[:, 2],
+                                               series_color,
+                                               f'{save_path}/scatter_ternary.{self.extension_fig}')
 
-        if z_series is None:
-            dimension = 2
-        else:
-            dimension = 3
+    # 2D
+    def make_scatter_matrix(self, cleaned_data, series_color, save_path):
 
-        self.visualiser.create_automatic_scatter_line(x_series, y_series, z_series, markers=True,
-                                                      save_path=f'{save_path_data}/scatter_{dimension}D_timestamp.'
-                                                                f'{self.extension_fig}')
+        self.visualiser.create_scatter_matrix(cleaned_data,
+                                              series_color,
+                                              f'{save_path}/scatter_matrix.{self.extension_fig}')
+
+    # 2D
+    def make_scatter_timestamp_2D(self, timestamp_series, reduced_1D_data, series_color, save_path):
+        self.visualiser.create_scatter_line_2D_3D_color_discrete(timestamp_series,
+                                                                 reduced_1D_data.iloc[:, 0],
+                                                                 None,
+                                                                 series_color,
+                                                                 f'{save_path}/scatter_2D_timestamp.{self.extension_fig}')
+
+    def make_scatter_timestamp_2D_continuous(self, timestamp_series, reduced_1D_data, series_color, save_path):
+        self.visualiser.create_scatter_line_2D_3D_color_scale(timestamp_series,
+                                                              reduced_1D_data.iloc[:, 0],
+                                                              None,
+                                                              series_color,
+                                                              f'{save_path}/scatter_2D_timestamp_continuous.{self.extension_fig}')
+
+
+    # 3D
+    def make_scatter_timestamp_3D(self, timestamp_series, reduced_2D_data, series_color, save_path):
+        self.visualiser.create_scatter_line_2D_3D_color_discrete(timestamp_series,
+                                                                 reduced_2D_data.iloc[:, 0],
+                                                                 reduced_2D_data.iloc[:, 1],
+                                                                 series_color,
+                                                                 f'{save_path}/scatter_3D_timestamp.{self.extension_fig}')
+
+    # 2D
+    def make_scatter_features_timestamp(self, timestamp_series, preprocessed_data, save_path):
+        self.visualiser.create_multiple_scatter_line(timestamp_series,
+                                                     preprocessed_data,
+                                                     'lines+markers',
+                                                     f'{save_path}/scatter_features_2D_timestamp.{self.extension_fig}')
+
+    # 2D
+    def make_histogram_timestamp(self, timestamp_series, reduced_1D_data, series_color, save_path_data):
+        self.visualiser.create_histogram(timestamp_series,
+                                         reduced_1D_data.iloc[:, 0],
+                                         series_color,
+                                         f'{save_path_data}/histogram_timestamp.{self.extension_fig}')
+
+    # ooD
+    def make_heatmap_correlation(self, correlated_data, save_path_data):
+        self.visualiser.create_heatmap(correlated_data,
+                                       f'{save_path_data}/heatmap_correlation.{self.extension_fig}')

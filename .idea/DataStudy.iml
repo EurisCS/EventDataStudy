@@ -6,6 +6,9 @@
       <sourceFolder url="file://$MODULE_DIR$/Utilities" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/DataAnalyse" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/DataManagement" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/DataAnalyse/GenericAnalyse" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SupervisedLearning" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/GeneticOptimizer" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/DataStorage" />
     </content>

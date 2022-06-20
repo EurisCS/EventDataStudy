@@ -1,6 +1,4 @@
 import pandas as pd
-
-
 # can add other reduction dimension with this method
 
 class ReductionDimensionUmap:

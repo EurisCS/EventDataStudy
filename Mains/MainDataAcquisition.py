@@ -7,13 +7,13 @@ sys.path.append('/home/eguimard/PycharmProjects/DataStudy/DataAcquisition')
 import argparse
 from time import time
 from Utilities.JsonFunctions import load_json_file, store_json_file
-from DataAcquisition.PipelineDataAcquisition import pipeline_data_acquisition
+from DataAcquisition.PipelineDataAcquisition import PipelineDataAcquisition
 
 
 class DataAcquisition:
 
     def __init__(self):
-        self.pipeline_to_run = pipeline_data_acquisition
+        self.pipeline_to_run = PipelineDataAcquisition
         self.out_path_file = None
 
     def run(self, dict_args=None):
@@ -22,9 +22,17 @@ class DataAcquisition:
         if dict_args is None:
             dict_args = self.management_command_errors(self.console_parse_args())
 
+        # take out this for the instantiation
+        host = dict_args.pop('host')
+        port = dict_args.pop('port')
+        out_path_data = dict_args.pop('out_path_data')
+        extension_store = dict_args.pop('extension_store')
+        update_query = dict_args.pop('update_query')
+
         # run
         T_start = time()
-        output_of_the_pipeline = self.pipeline_to_run(**dict_args)
+        output_of_the_pipeline = self.pipeline_to_run(host, port, out_path_data, extension_store, update_query).\
+            get_data_from_events_and_alerts_and_store_datas(**dict_args)
         time_exec = time() - T_start
 
         # outfile
@@ -43,12 +51,14 @@ class DataAcquisition:
 
         parser.add_argument('-host', '--host', help="host of the elastic cluster", required=False)
         parser.add_argument('-port', '--port', help="port of the elastic cluster", required=False)
-        parser.add_argument('-index', '--index_cluster', help="index in the elastic cluster ", required=False)
+
         parser.add_argument('-uq', '--update_query', help='setup file for launch', default=None, required=False)
 
-        parser.add_argument('-lf', '--list_features_to_extract', default=None, required=False,
-                            help='list of wanted feature to get' )
-
+        """ # CHANGE THIS : NOT UPDATED AGAIN
+            parser.add_argument('-lf', '--list_features_to_extract', default=None, required=False,
+                                help='list of wanted feature to get' )
+            parser.add_argument('-index', '--index_cluster', help="index in the elastic cluster ", required=False)
+        """
         parser.add_argument('-opf', '--out_path_file',
                             help="define a path to create an outfile of the run",required=False)
 

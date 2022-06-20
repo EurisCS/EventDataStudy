@@ -1,1 +1,0 @@
-{"init_shape": "(44, 32)", "drop_na_and_constants_columns": "(44, 8)", "drop_duplicates_row": "(44, 8)", "drop_na_row": "(44, 8)", "column_to_saves": "(44, 7)", "columns_to_delete": "(44, 7)", "saved_data": "(44, 1)"}

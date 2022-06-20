@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from scipy.sparse import hstack, coo_matrix
 
 
-class loadPreprocessorObjects:
+class LoadPreprocessorObjects:
 
     @staticmethod
     def load_scaler(scaler):
@@ -48,7 +48,7 @@ class loadPreprocessorObjects:
             from sklearn.impute import KNNImputer
             return KNNImputer()
 
-        if imputer in ['simple', 'simpleimputer', None]: # passer None si possible
+        if imputer in ['simple', 'simpleimputer', None]:  # passer None si possible
             from sklearn.impute import SimpleImputer
             return SimpleImputer(strategy='constant', fill_value='null')
 
@@ -60,7 +60,7 @@ class Preprocessing:
     # need to be change the init if you want another preprocessing
     def __init__(self, scaler='robust', encoder='onehot', impute_num='knn', impute_cat='simple'):
 
-        loader = loadPreprocessorObjects()
+        loader = LoadPreprocessorObjects()
 
         self._num_features = make_column_selector(dtype_include=np.number)
         self._cat_features = make_column_selector(dtype_exclude=np.number)
@@ -96,39 +96,59 @@ class Preprocessing:
 
     # LABELLED ################################################################################################
 
-    # IN WORKING
-    def preprocessing_train_test_labelled(self, X, y, test_size=0.20):
-        # encode y
-        # y_encoded = LabelEncoder().fit_transform(np.ravel(y))
-        # y_encoded = RobustScaler().fit_transform(np.ravel(y))
-        y_encoded = np.ravel(y)
+    def preprocessing_labelled_data_into_train_test_set(self, X_data, y_data, test_size=0.20, random_state=42,
+                                                        out_format='array', for_classification=True):
 
-        # train test split
-        # stratify doesn't work for regression -> check the doc
-        # X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.20, random_state=42,
-        # stratify=y_encoded)
+        y_data = np.ravel(y_data)
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=test_size, random_state=42)
+        stratify = None
+        if for_classification:
+            stratify = y_data
 
-        # pipeline => impute and scale X
-        numerical_pipeline = make_pipeline(KNNImputer(), RobustScaler(quantile_range=(25.0, 75.0)))
-        numerical_preprocessor = make_column_transformer((numerical_pipeline, self._num_features))
+        X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=test_size,
+                                                            random_state=random_state, stratify=stratify)
 
-        # fit on train, transorm on train /test
+        # NUM : fit on X_train & transform on X_train/X_test
+        numerical_preprocessor = self._create_numerical_preprocessor()
         X_train_num = numerical_preprocessor.fit_transform(X_train)
         X_test_num = numerical_preprocessor.transform(X_test)
 
-        # pipeline => impute and encode X
-        categorical_pipeline = make_pipeline(SimpleImputer(strategy='constant', fill_value='null'), OneHotEncoder())
-        categorical_preprocessor = make_column_transformer((categorical_pipeline, self._cat_features))
-
-        # fit on all -> transform on train/test
-        categorical_preprocessor.fit(X)
+        # CAT : fit on X & transform on X_train/X_test
+        categorical_preprocessor = self._create_categorical_preprocessor()
+        categorical_preprocessor.fit(X_data)
         X_train_cat = categorical_preprocessor.transform(X_train)
         X_test_cat = categorical_preprocessor.transform(X_test)
 
-        # merge cat and num array
+        # merge categorical and numerical data ... NEED TO CHANGE THE FORMAT, can SCIPY MATRIX
         X_train = hstack([coo_matrix(X_train_cat), coo_matrix(X_train_num)], format='array')
         X_test = hstack([coo_matrix(X_test_cat), coo_matrix(X_test_num)], format='array')
 
+        if out_format.lower() == 'dataframe':
+            return pd.DataFrame(X_train), pd.DataFrame(X_test), pd.DataFrame(y_train), pd.DataFrame(y_test)
+
         return X_train, X_test, y_train, y_test
+
+    def preprocessing_labelled_data_into_train_set(self, X_data, y_data, out_format='array'):
+
+        y_data = np.ravel(y_data)
+
+        # NUM : fit on X_train & transform on X_train/X_test
+        numerical_preprocessor = self._create_numerical_preprocessor()
+        X_num = numerical_preprocessor.fit_transform(X_data)
+
+        # CAT : fit on X & transform on X_train/X_test
+        categorical_preprocessor = self._create_categorical_preprocessor()
+        X_cat = categorical_preprocessor.fit_transform(X_data)
+
+        X_data = hstack([coo_matrix(X_cat), coo_matrix(X_num)], format='array')
+
+        if out_format.lower() == 'dataframe':
+            return pd.DataFrame(X_data), pd.DataFrame(y_data)
+
+        return X_data, y_data
+
+
+
+    #
+    # can add after :
+    #  from sklearn.model_selection import TimeSeriesSplit

@@ -1,0 +1,17 @@
+{
+  "path_json_query": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/JsonQuery/eventAvailabilityVM1.json",
+  "out_path_data": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/AcquiredData/events_20220502_availability_VM1_2/",
+  "extension_store": "csv",
+
+  "host" : "localhost",
+  "port" : "9200",
+  "index_cluster" : "events-20220502",
+
+   "list_features_to_extract" : ["hostname"],
+  "extract_utc_timestamp":  true,
+  "sort_by_utc_timestamp": true,
+
+  "update_query": false,
+
+  "out_path_file": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/OutFile/test_run_event_2000.json"
+}

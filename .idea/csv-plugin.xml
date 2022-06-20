@@ -3,437 +3,122 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="/DataStorage/Results/AcquiredData/AvailabilityWarningCritical/cpu.csv">
+        <entry key="/DataStorage/Results/DataAcquisition/CPUWarningCriticalVM2/cpu.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/AvailabilityWarningCritical/fsstat.csv">
+        <entry key="/DataStorage/Results/DataAcquisition/CPUWarningCriticalVM2/fsstat.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/AvailabilityWarningCritical/memory.csv">
+        <entry key="/DataStorage/Results/DataAcquisition/CPUWarningCriticalVM2/memory.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/AvailabilityWarningCritical/network.csv">
+        <entry key="/DataStorage/Results/DataAcquisition/CPUWarningCriticalVM2/network.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/AvailabilityWarningCritical_1/cpu.csv">
+        <entry key="/DataStorage/Results/DataAcquisition/FunctionalTest/cpu.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/AvailabilityWarningCritical_1/fsstat.csv">
+        <entry key="/DataStorage/Results/DataAcquisition/FunctionalTest/fsstat.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/AvailabilityWarningCritical_1/memory.csv">
+        <entry key="/DataStorage/Results/DataAcquisition/FunctionalTest/memory.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/AvailabilityWarningCritical_1/network.csv">
+        <entry key="/DataStorage/Results/DataAcquisition/FunctionalTest/network.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/cpu/correlated_data.csv">
+        <entry key="/DataStorage/Results/DataAnalyse/CPUWarningCriticalVM2/cpu/data/cleaned_data.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/cpu/preprocessed_data.csv">
+        <entry key="/DataStorage/Results/DataAnalyse/CPUWarningCriticalVM2/cpu/data/preprocessed_data.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/cpu/reduced_1D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/cpu/reduced_2D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/cpu/reduced_3D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/cpu/saved_data.csv">
+        <entry key="/DataStorage/Results/DataAnalyse/CPUWarningCriticalVM2/cpu/data/saved_data.csv">
           <value>
             <Attribute>
               <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/fsstat/correlated_data.csv">
+        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/cpu/data/cleaned_data.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/fsstat/preprocessed_data.csv">
+        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/cpu/data/correlated_data.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/fsstat/reduced_1D_data.csv">
+        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/cpu/data/preprocessed_data.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/fsstat/reduced_2D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/fsstat/reduced_3D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/fsstat/saved_data.csv">
+        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/cpu/data/saved_data.csv">
           <value>
             <Attribute>
               <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/memory/correlated_data.csv">
+        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/memory/data/correlated_data.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/memory/preprocessed_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/memory/reduced_1D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/memory/reduced_2D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/memory/reduced_3D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/memory/saved_data.csv">
+        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/memory/data/saved_data.csv">
           <value>
             <Attribute>
               <option name="separator" value=":" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/network/correlated_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/network/preprocessed_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/network/reduced_1D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/network/reduced_2D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/network/reduced_3D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical/network/saved_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value=":" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/cpu/correlated_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/cpu/preprocessed_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/cpu/reduced_1D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/cpu/reduced_2D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/cpu/reduced_3D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/cpu/saved_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value=":" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/fsstat/correlated_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/fsstat/preprocessed_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/fsstat/reduced_1D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/fsstat/reduced_2D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/fsstat/reduced_3D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/fsstat/saved_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value=":" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/memory/correlated_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/memory/preprocessed_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/memory/reduced_1D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/memory/reduced_2D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/memory/reduced_3D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/memory/saved_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value=":" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/network/correlated_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/network/preprocessed_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/network/reduced_1D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/network/reduced_2D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/network/reduced_3D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/dataAnalyseAvailabilityWarningCritical_1/network/saved_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value=":" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/data_analyse_events_20220502_availability_VM1/cpu/correlated_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/data_analyse_events_20220502_availability_VM1/cpu/preprocessed_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/data_analyse_events_20220502_availability_VM1/cpu/reduced_3D_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/data_analyse_events_20220502_availability_VM1/cpu/saved_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value=":" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/events_20220502_all_perimeter/cpu.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/AcquiredData/events_20220502_availability_VM1_csv/fsstat.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>

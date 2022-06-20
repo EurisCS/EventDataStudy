@@ -1,0 +1,41 @@
+{
+  "out_path_data": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/AcquiredData/AvailabilityWarningCritical/",
+  "extension_store": "csv",
+
+  "host" : "localhost",
+  "port" : "9200",
+
+  " ####### STOP THIS SHIT START ################################################# ": "",
+  "index_event" : "events-20220502",
+  "index_alert": "analyzer-events-202106",
+
+  "recover_timestamp": "utctimestamp",
+  "list_features_to_extract" : ["utctimestamp"],
+  "list_col_to_convert_to_datetime":  ["utctimestamp"],
+  "list_col_to_sort_df": ["utctimestamp"],
+
+  " ####### STOP THIS SHIT END #################################################### ": "",
+
+  "dict_param_event": {
+    "index_cluster": "events-20220502",
+    "path_json_query_event": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/JsonQuery/AvailabilityCriticalWarningRange.json",
+    "list_features_to_extract" : ["utctimestamp"],
+    "list_col_to_convert_to_datetime":  ["utctimestamp"],
+    "list_col_for_sort_df": ["utctimestamp"]
+  },
+
+  "dict_param_analyzer_event": {
+    "index_cluster": "events-20220502",
+    "path_json_query_alert": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/JsonQuery/AvailabilityCriticalWarningRange.json",
+    "list_features_to_extract" : ["utctimestamp", "probe_id"],
+    "list_col_to_convert_to_datetime":  ["utctimestamp"],
+    "list_col_for_sort_df": ["utctimestamp"],
+    "COMMENT FAIRE MATCHER EVENT ET ANALYZER EVENT MANUELLEMENT ": ""
+  },
+
+  "dict_param_alert": null,
+
+  "update_query": false,
+
+  "out_path_file": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/OutFile/test_run_event_2000.json"
+}

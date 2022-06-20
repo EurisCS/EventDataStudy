@@ -9,7 +9,7 @@ class CleanData:
 
     def __call__(self, data, columns_to_save_out, columns_to_delete,
                  threshold_na_in_column=0.5, threshold_na_in_row=0.2,
-                 reset_index=True):
+                 threshold_correlation=0.95, reset_index=True):
 
         self.report = dict()
         self.report['init_shape'] = str(data.shape)
@@ -17,18 +17,28 @@ class CleanData:
         if reset_index:
             data = data.reset_index(drop=True)
 
-        # drop bad rows and columns
-        data = self.drop_bad_row_and_columns(data, threshold_na_in_column, threshold_na_in_row)
+        # drop duplicates rows
+        data = self.toolbox.drop_duplicates_row(data)
+        self.report['drop_duplicates_row'] = str(data.shape)
 
-        # drop data to save && delete data to delete
+        # drop rows by checking Nan
+        data = self.toolbox.drop_row_with_na(data, threshold_na_in_row)
+        self.report['drop_na_row'] = str(data.shape)
+
+        # save data from columns_to_save_out && delete data from columns_to_delete
         data, saved_data = self.save_and_drop_columns(data, columns_to_save_out, columns_to_delete)
-
         self.report['saved_data'] = str(saved_data.shape)
+
+        # drop columns by checking Nan & constants
+        data = self.toolbox.drop_na_and_constants_columns(data, threshold_na_in_column)
+        self.report['drop_na_and_constants_columns'] = str(data.shape)
+
+        data = self.toolbox.drop_correlated_data(data, threshold=threshold_correlation)
+        self.report['drop_correlated_data'] = str(data.shape)
 
         return data, saved_data
 
     def save_and_drop_columns(self, data, columns_to_save_out, columns_to_delete):
-
         # drop data to save
         data, saved_data = self.toolbox.split_data_from_list(data, columns_to_save_out)
 
@@ -41,20 +51,6 @@ class CleanData:
 
         return data, saved_data
 
-    def drop_bad_row_and_columns(self, data, threshold_na_in_column, threshold_na_in_row):
-
-        # drop columns by checking Nan & constants
-        data = self.toolbox.drop_na_and_constants_columns(data, threshold_na_in_column)
-        self.report['drop_na_and_constants_columns'] = str(data.shape)
-
-        data = self.toolbox.drop_duplicates_row(data)  # drop duplicates rows
-        self.report['drop_duplicates_row'] = str(data.shape)
-
-        data = self.toolbox.drop_row_with_na(data, threshold_na_in_row)  # drop rows by checking Nan
-        self.report['drop_na_row'] = str(data.shape)
-
-        return data
-
 
 class CleanDataToolBox:
 
@@ -64,7 +60,6 @@ class CleanDataToolBox:
     def split_data_from_list(data, list_data_to_drop):
 
         if list_data_to_drop is not None:
-
             if type(list_data_to_drop) is str:
                 list_data_to_drop = [list_data_to_drop]
 
@@ -73,36 +68,50 @@ class CleanDataToolBox:
                 data_dropped = data[list_data_to_drop]
                 data = data.drop(list_data_to_drop, axis=1)
 
-                if data_dropped.shape[1] == 0:   # check data dropped
+                if data_dropped.shape[1] == 0:  # check data dropped
                     return data, pd.DataFrame()
-
                 return data, data_dropped
-
             except KeyError:
                 return data, pd.DataFrame()
 
         return data, pd.DataFrame()
 
+    @staticmethod
+    def drop_correlated_data(data, threshold=0.95):
+
+        if threshold is None:
+            return data
+
+        column_to_drop = set()
+        corr_matrix = abs(data.corr())
+
+        # browse the lower part of the correlated matrix
+        for index_col in range(len(corr_matrix.columns)):
+            for index_row in range(index_col):
+                if corr_matrix.iloc[index_col, index_row] >= threshold:
+                    column_to_drop.add(corr_matrix.columns[index_col])
+        return data.drop(column_to_drop, axis=1)
+
     def drop_na_and_constants_columns(self, data, threshold_na=0.5):
         set_drop = set()
 
         for column_name in data.columns:
-            if self.check_na_rate_in_column(data[column_name], threshold_na):
+            if self._check_na_rate_in_column(data[column_name], threshold_na):
                 set_drop.add(column_name)
-            if self.check_column_is_constant(data[column_name]):
+            if self._check_column_is_constant(data[column_name]):
                 set_drop.add(column_name)
 
         return data.drop(set_drop, axis=1)
 
     @staticmethod
-    def check_na_rate_in_column(column, threshold):
+    def _check_na_rate_in_column(column, threshold):
         na_rate = column.isna().sum() / len(column)
         if na_rate >= threshold:
             return True
         return False
 
     @staticmethod
-    def check_column_is_constant(column):
+    def _check_column_is_constant(column):
         if len(list(column.value_counts())) <= 1:
             return True
         return False
@@ -128,13 +137,14 @@ class CleanDataToolBox:
     @staticmethod
     def drop_row_with_na(data, threshold=0.2):
         list_drop = []
+        print(data.shape)
         for index in range(data.shape[0]):
-            list_values = list(data.iloc[index])
-            if list_values:
-                if (list_values.count(None) / len(list_values)) >= threshold:
-                    list_drop.append(index)
+            list_null = list(data.iloc[index].isnull())
+            if (list_null.count(True) / len(list_null)) >= threshold:
+                list_drop.append(index)
 
-        return data.drop(list_drop, axis=0)
+        data = data.drop(list_drop, axis=0)
+        return data.reset_index(drop=True)
 
 
 # NOT IN DEV / NOT USED ############################################################################################
