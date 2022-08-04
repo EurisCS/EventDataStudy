@@ -1,28 +1,38 @@
 import pandas as pd
+
+
 # can add other reduction dimension with this method
+
+class LoadReducerProgram:
+
+    def __call__(self, name_reducer_program):
+
+        if name_reducer_program.lower() in ['umap', None]:
+            from umap import UMAP
+            return UMAP
+
+        elif name_reducer_program.lower() in ['aligned', 'aligned_umap']:
+            from umap import AlignedUMAP
+            return AlignedUMAP
+
+        elif name_reducer_program.lower() in ['parametric', 'parametric_umap']:
+            from umap import ParametricUMAP
+            return ParametricUMAP
+
+        elif name_reducer_program.lower() in ['tsne', ]:
+            from sklearn.manifold import TSNE
+            return TSNE
+
 
 class ReductionDimensionUmap:
 
-    def __init__(self, type_reduction='umap', dict_param=None):
+    def __init__(self, name_reducer_program='umap', dict_param=None):
 
-        # chose r_dim algorithm
+        # chose r_dim program
+        self.reducer = LoadReducerProgram()(name_reducer_program)
 
-        if type_reduction.lower() in ['umap', None]:
-            from umap import UMAP
-            self.reducer = UMAP
-
-        elif type_reduction.lower() in ['aligned', 'aligned_umap']:
-            from umap import AlignedUMAP
-            self.reducer = AlignedUMAP
-
-        elif type_reduction.lower() in ['parametric', 'parametric_umap']:
-            from umap import ParametricUMAP
-            self.reducer = ParametricUMAP
-
-        # dict param  (change ?)
-        self.dict_param = dict_param
-        if self.dict_param in [None, '']:
-            self.dict_param = {}
+        # dict param
+        self.dict_param = {} if dict_param in [None, ''] else dict_param
 
     def run(self, data_to_transform, output_dimension=3, raw_output_returned=True, column_color=None):
 
@@ -36,10 +46,9 @@ class ReductionDimensionUmap:
         if column_color is None:
             return pd.DataFrame(X_transformed)
 
-        return self.concatenate_column_color_to_transformed_data(X_transformed, column_color)
+        return self.concatenate_column_labels_to_transformed_data(X_transformed, column_color)
 
     @staticmethod
-    def concatenate_column_color_to_transformed_data(X_transformed, column_color):
-        df_color = pd.DataFrame(column_color).reset_index(drop=True).rename(columns={0: 'color'})
+    def concatenate_column_labels_to_transformed_data(X_transformed, column_labels):
+        df_color = pd.DataFrame(column_labels).reset_index(drop=True).rename(columns={0: 'labels'})
         return pd.concat([pd.DataFrame(X_transformed), df_color], axis=1)
-

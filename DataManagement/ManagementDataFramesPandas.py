@@ -20,8 +20,6 @@ class ManageDataFrames:
 
         self.store_dict_df_into_directory(dict_df_to_save, path_df_stored, extension=extension)
 
-
-
     # CONCATENATE ################################################################################################
 
     def concatenate_dict_dfs_and_drop_duplicates_rows(self, dict_df_1, dict_df_2):

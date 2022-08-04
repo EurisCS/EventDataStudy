@@ -59,66 +59,52 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/DataAnalyse/CPUWarningCriticalVM2/cpu/data/cleaned_data.csv">
+        <entry key="/DataStorage/Results/DataAcquisition/testCPUWarningCritical/cpu.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/DataAnalyse/CPUWarningCriticalVM2/cpu/data/preprocessed_data.csv">
+        <entry key="/DataStorage/Results/DataAnalyse/AllFeatureAnalyse/cpu/data/cleaned_data.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/DataAnalyse/CPUWarningCriticalVM2/cpu/data/saved_data.csv">
+        <entry key="/DataStorage/Results/DataAnalyse/AllFeatureAnalyse/cpu/data/data_series_color.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/DataStorage/Results/DataAnalyse/OneFeatureCpuAnalyse/cpu/data/cleaned_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/DataStorage/Results/DataAnalyse/OneFeatureCpuAnalyse/cpu/data/data_series_color.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/DataStorage/Results/DataAnalyse/OneFeatureCpuAnalyse/cpu/data/saved_data.csv">
           <value>
             <Attribute>
               <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>
-        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/cpu/data/cleaned_data.csv">
+        <entry key="/DataStorage/Results/SupervisedLearning/AllFeaturesRfc/rf/result.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/cpu/data/correlated_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/cpu/data/preprocessed_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/cpu/data/saved_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value=":" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/memory/data/correlated_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/DataStorage/Results/DataAnalyse/FunctionalTest/memory/data/saved_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>

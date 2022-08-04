@@ -37,10 +37,10 @@ class ExtractData:
         # the return of the query. each result is a row of the final df.
         for results in raw_data['hits']['hits']:
 
-            relevant_name, relevant_data = self._select_relevant_data_from_details(results['_source']['details'])
+            name_observation, data_observation = self._select_relevant_data_from_details(results['_source']['details'])
 
-            if relevant_name is not None:
-                dict_extracted_data = self._develop_data_recursively_for_extraction(relevant_data)
+            if name_observation is not None:
+                dict_extracted_data = self._develop_data_recursively_for_extraction(data_observation)
 
                 # extract wanted data like timestamp , hostname , source 	...
                 if self.list_features_to_extract is not None:
@@ -49,7 +49,7 @@ class ExtractData:
                                                                              dict_extracted_data)
 
                 # append current dict (row) to the good list
-                dict_lists_of_dict_data = self._append_dict_row_to_corresponding_list(relevant_name,
+                dict_lists_of_dict_data = self._append_dict_row_to_corresponding_list(name_observation,
                                                                                       dict_extracted_data,
                                                                                       dict_lists_of_dict_data)
 
@@ -64,7 +64,8 @@ class ExtractData:
     # NEED TO ADD SOME VALUE KEYS :  the unique non generic function
     @staticmethod
     def _select_relevant_data_from_details(details_data):
-        # on imagine qu'il y'a qu'une key à recover dans details
+
+        # il y a généralement une seule key dans details data... à vérifier
         list_key = details_data.keys()
 
         if 'system' in list_key:

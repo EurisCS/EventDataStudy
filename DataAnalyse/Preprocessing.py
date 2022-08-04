@@ -147,8 +147,14 @@ class Preprocessing:
 
         return X_data, y_data
 
+    @staticmethod
+    def train_test_split_data(X_data, y_data, test_size, random_state=42, for_classification=True):
 
+        stratify = None
+        if for_classification:
+            stratify = y_data
 
+        return train_test_split(X_data, y_data, test_size=test_size, random_state=random_state, stratify=stratify)
     #
     # can add after :
     #  from sklearn.model_selection import TimeSeriesSplit

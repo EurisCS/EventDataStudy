@@ -196,17 +196,8 @@ class VisualiseDataPlotlyExpress:
         return self.store_or_return_object(figure, save_path)
 
     # SUBPLOT ########################################################################################################
-    '''
-    def make_subplot(self, list_figure):
 
-        for figure in list_figure:
-            if type(figure) is list:
-                for fig in figure:
-                    make_subplot()
-            else:
-                make_subplot()
 
-    '''
     #
     #
     #
@@ -256,3 +247,5 @@ class VisualiseDataPlotlyExpress:
         if save_path is None:
             return figure
         self.store_figure(figure, save_path)
+
+

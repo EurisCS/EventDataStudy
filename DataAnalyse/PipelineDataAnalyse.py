@@ -18,7 +18,7 @@ from Utilities.JsonFunctions import store_json_file
 #  LA SERIE TIMESTAMP S'ARRONDI A LA MINUTE POUR LE scatter_timestamp_3D
 #
 # PROBLEME DE LOGIQUE DANS CLEAN DATA : DROP ROW WITH NA NE FONCITONNE PAS SI = 0.99
-#   --> CAR ON VERIFIE DES COLONNE COMME TS_SERIES ou SEVERITY
+#   --> CAR ON CE CHECK S'EFFECTUE SUR LE DATASET INCLUANT DES COLONNE COMME TS_SERIES ou SEVERITY
 
 
 ## TO DO
@@ -50,18 +50,19 @@ class PipelineDataAnalyse:
         self.cleaner = CleanData()
         self.preprocessor = Preprocessing(**dict_param_preprocessing)
         self.visualiser = VisualiseDataPlotlyExpress()
+
         # set up the reducer
         if True in [scatter_2D, scatter_3D, scatter_ternary, scatter_2D_timestamp, scatter_3D_timestamp,
                     histogram_timestamp]:
             self.reducer = ReductionDimensionUmap(algorithm_reduction_dimension, dict_param_reduction_dimension)
 
+        if type(list_algorithm_clustering) in [str, None]:
+            list_algorithm_clustering = [list_algorithm_clustering]
         self.list_name_clustering = list_algorithm_clustering
-        if type(self.list_name_clustering) in [str, None]:
-            self.list_name_clustering = [self.list_name_clustering]
 
+        if type(list_dict_param_clustering) in [dict, None]:
+            list_dict_param_clustering = [list_dict_param_clustering]
         self.list_dict_param_clustering = list_dict_param_clustering
-        if type(self.list_dict_param_clustering) in [dict, None]:
-            self.list_dict_param_clustering = [self.list_dict_param_clustering]
 
         self.dict_param_clean_data = dict_param_clean_data
 
@@ -93,7 +94,7 @@ class PipelineDataAnalyse:
         self.histogram_timestamp = histogram_timestamp
         self.heatmap_correlation = heatmap_correlation
 
-    def pipeline_multiple_df(self, in_path_data_directory, save_path_root):
+    def pipeline_analyse_multiple_df(self, in_path_data_directory, save_path_root):
 
         create_directory(save_path_root)
 
@@ -102,9 +103,9 @@ class PipelineDataAnalyse:
 
         # multiprocessing to setup
         for name_df in dict_df_input.keys():
-            self.pipeline_one_df(dict_df_input[name_df], f'{save_path_root}/{name_df}')
+            self.pipeline_analyse_one_df(dict_df_input[name_df], f'{save_path_root}/{name_df}')
 
-    def pipeline_one_df(self, input_data, save_path):
+    def pipeline_analyse_one_df(self, input_data, save_path):
 
         create_directory(save_path)
 
@@ -165,14 +166,13 @@ class PipelineDataAnalyse:
 
     def clean_data_and_store_data_to_save(self, input_data, save_path_data):
 
-        cleaned_data, data_to_save = self.cleaner(input_data, **self.dict_param_clean_data)
+        cleaned_data, data_to_save = self.cleaner.generic_cleaning_dataframe(input_data, **self.dict_param_clean_data)
 
         self.data_manager.store_df(cleaned_data, f'{save_path_data}/cleaned_data', self.extension_data, False)
-
         if data_to_save is not None:
             self.data_manager.store_df(data_to_save, f'{save_path_data}/saved_data', self.extension_data, False)
 
-        return cleaned_data, data_to_save,
+        return cleaned_data, data_to_save
 
     def preprocess_and_store_data(self, cleaned_data, save_path_data):
 
@@ -208,7 +208,8 @@ class PipelineDataAnalyse:
             self.make_heatmap_correlation(dict_data['data_correlation_matrix'], save_path)
 
         if self.scatter_features_timestamp:
-            self.make_scatter_features_timestamp(dict_data['timestamp_series'], dict_data['preprocessed_data'], save_path)
+            self.make_scatter_features_timestamp(dict_data['timestamp_series'], dict_data['preprocessed_data'],
+                                                 save_path)
 
         '''
             
@@ -252,6 +253,7 @@ class PipelineDataAnalyse:
             if self.histogram_features:
                 self.make_histogram_features()
         '''
+
     # FUNCTIONS : FIGURE CREATION ###################################################################################
 
     # 2D
@@ -298,7 +300,6 @@ class PipelineDataAnalyse:
                                                               None,
                                                               series_color,
                                                               f'{save_path}/scatter_2D_timestamp_continuous.{self.extension_fig}')
-
 
     # 3D
     def make_scatter_timestamp_3D(self, timestamp_series, reduced_2D_data, series_color, save_path):

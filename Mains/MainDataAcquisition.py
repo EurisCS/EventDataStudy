@@ -10,7 +10,7 @@ from Utilities.JsonFunctions import load_json_file, store_json_file
 from DataAcquisition.PipelineDataAcquisition import PipelineDataAcquisition
 
 
-class DataAcquisition:
+class MainDataAcquisition:
 
     def __init__(self):
         self.pipeline_to_run = PipelineDataAcquisition
@@ -109,4 +109,4 @@ class DataAcquisition:
 
 
 if __name__ == '__main__':
-    DataAcquisition().run()
+    MainDataAcquisition().run()

@@ -6,13 +6,13 @@ sys.path.append('/home/eguimard/PycharmProjects/DataStudy/DataAnalyse')
 import argparse
 from time import time
 from Utilities.JsonFunctions import load_json_file, store_json_file
-from PipelineDataAnalyse import PipelineDataAnalyse
+from PipelineDataAnalyse2 import PipeDataAnalyseDataClass
 
 
-class DataAnalye:
+class MainDataAnalyse:
 
     def __init__(self):
-        self.pipeline_to_run = PipelineDataAnalyse
+        self.pipeline_to_run = PipeDataAnalyseDataClass
         self.out_path_file = None
 
     def run(self, dict_args=None):
@@ -28,7 +28,7 @@ class DataAnalye:
         # run
         T_start = time()
         output_of_the_pipeline = \
-            self.pipeline_to_run(**dict_args).pipeline_multiple_df(in_path_data_directory, save_path)
+            self.pipeline_to_run(**dict_args).pipeline_analyse_multiple_df(in_path_data_directory, save_path)
         time_exec = time() - T_start
 
         # outfile
@@ -120,4 +120,4 @@ class DataAnalye:
 
 
 if __name__ == '__main__':
-    DataAnalye().run()
+    MainDataAnalyse().run()

@@ -1,9 +1,0 @@
-{
-  "host" : "localhost",
-  "port" : "9200",
-  "index_cluster" : "events-20220502",
-  "path_json_query": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/JsonQuery/eventIntegrityVM1.json",
-  "out_path_data": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/AcquiredData",
-  "extension_store": "pickle",
-  "out_path_file": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/OutFile"
-}

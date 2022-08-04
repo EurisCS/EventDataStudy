@@ -7,9 +7,9 @@ class CleanData:
         self.toolbox = CleanDataToolBox()
         self.report = dict()
 
-    def __call__(self, data, columns_to_save_out, columns_to_delete,
-                 threshold_na_in_column=0.5, threshold_na_in_row=0.2,
-                 threshold_correlation=0.95, reset_index=True):
+    def generic_cleaning_dataframe(self, data, list_columns_to_save, columns_to_save_out, columns_to_delete,
+                                   threshold_na_in_column=0.5, threshold_na_in_row=0.2,
+                                   threshold_correlation=0.95, reset_index=True):
 
         self.report = dict()
         self.report['init_shape'] = str(data.shape)
@@ -26,7 +26,8 @@ class CleanData:
         self.report['drop_na_row'] = str(data.shape)
 
         # save data from columns_to_save_out && delete data from columns_to_delete
-        data, saved_data = self.save_and_drop_columns(data, columns_to_save_out, columns_to_delete)
+        data, saved_data = self.save_and_drop_columns(data, list_columns_to_save, columns_to_save_out,
+                                                      columns_to_delete)
         self.report['saved_data'] = str(saved_data.shape)
 
         # drop columns by checking Nan & constants
@@ -38,11 +39,15 @@ class CleanData:
 
         return data, saved_data
 
-    def save_and_drop_columns(self, data, columns_to_save_out, columns_to_delete):
+    def save_and_drop_columns(self, data, list_columns_to_save, columns_to_save_out, columns_to_delete):
         # drop data to save
         data, saved_data = self.toolbox.split_data_from_list(data, columns_to_save_out)
 
         self.report['column_to_saves'] = str(data.shape)
+
+        # drop data to save
+        if list_columns_to_save not in [[], None, [None]]:
+            __, data = self.toolbox.split_data_from_list(data, list_columns_to_save)
 
         # delete data to delete
         data, __ = self.toolbox.split_data_from_list(data, columns_to_delete)
@@ -137,7 +142,6 @@ class CleanDataToolBox:
     @staticmethod
     def drop_row_with_na(data, threshold=0.2):
         list_drop = []
-        print(data.shape)
         for index in range(data.shape[0]):
             list_null = list(data.iloc[index].isnull())
             if (list_null.count(True) / len(list_null)) >= threshold:
