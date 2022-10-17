@@ -1,0 +1,63 @@
+{
+  "in_path_data_directory": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/DataAcquisition/CPUWarningCriticalVM2",
+  "save_path": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/DataAnalyse/OneFeatureCpuAnalyse",
+
+   "dict_list_features_to_save": {"cpu":["total_norm_pct"]},
+  "dict_param_clean_data": {
+    "columns_to_save_out": ["utctimestamp","severity"],
+    "columns_to_delete": "hostname",
+    "threshold_na_in_column": 1,
+    "threshold_na_in_row": 0.9,
+    "threshold_correlation" : 1,
+    "reset_index": true
+  },
+
+  "dict_param_preprocessing": {
+    "scaler": "minmax",
+    "encoder": "onehot",
+    "impute_num": "knn",
+    "impute_cat": "simple"
+  },
+
+  "list_name_columns_color":["severity"],
+  "mapped_series_color": {"severity": {"INFO":  "green", "WARNING":  "orange", "CRITICAL":  "red"}},
+  "list_discrete_color_for_series_color_imported": ["green","orange","red"],
+  "timestamp_column_name": "utctimestamp",
+
+  "extension_data": "csv",
+  "extension_figure": "html",
+
+  "list_dimension_to_reduce": [2,3],
+  "algorithm_reduction_dimension": "umap",
+  "dict_param_reduction_dimension": {},
+
+  "list_name_data_to_analyse_correlation": ["input", "cleaned", "preprocessed", "3D"],
+  "method_correlation": "pearson",
+
+  "make_clustering": true,
+  "list_algorithm_clustering": ["hdbscan","dbscan","kmeans"],
+  "list_dict_param_clustering":
+  [
+    {},
+    {"eps": 0.5, "min_samples": 5,"metric": "euclidean"},
+    {}
+  ],
+  "list_dimensions_to_make_clustering": [null,2],
+
+  "dashboard_data_analyse": false,
+  "scatter_features_timestamp": true,
+  "heatmap_correlation": true,
+  "table_figure": true,
+
+  "dashboard_2D": true,
+  "scatter_2D": true,
+  "scatter_2D_timestamp": true,
+
+  "scatter_3D": false,
+  "scatter_3D_timestamp": false,
+
+  "histogram_features":true,
+  "scatter_matrix": true,
+
+  "out_path_file":"/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/outFile/testDataAnalyse.json"
+}

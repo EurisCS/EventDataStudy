@@ -1,0 +1,29 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "hostname": "VM2"
+          }
+        },
+        {
+          "match": {
+            "category": "availability"
+          }
+        },
+        {
+          "range": {
+            "utctimestamp": {
+              "gt": "2022-06-16T12:20:00",
+              "lt": "2022-06-16T12:50:00"
+            }
+          }
+        }
+      ],
+      "must_not": [],
+      "should": []
+    }
+  }
+}
+
