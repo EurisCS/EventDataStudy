@@ -1,0 +1,20 @@
+{
+      "host": "localhost",
+      "port": "9200",
+      "extension_store": "csv",
+      "out_path_data": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/DataAcquisition/CPUWarningCriticalVM2",
+      "update_query": false,
+
+      "index_events": "events-20220502",
+      "path_json_query_events": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/JsonQuery/CPUWarningCriticalVM2.json",
+      "timestamp_column": "utctimestamp",
+      "list_features_to_extract_in_events": [],
+
+      "index_alerts": "alerts-202205",
+      "path_json_query_alerts": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/JsonQuery/CPUWarningCriticalVM2.json",
+      "alerts_in_labels": true,
+      "list_features_to_extract_in_alerts": [],
+      "path_store_alerts": null,
+
+      "out_path_file": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/outFile/CPUWarningCriticalVM2.json"
+}

@@ -1,0 +1,36 @@
+{
+    "input_path_data" : "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/DataAnalyse/AllFeatureAnalyse/cpu/data",
+    "save_path_root": "/home/eguimard/PycharmProjects/DataStudy/DataStorage/Results/SupervisedLearning/AllFeaturesRfc",
+
+    "split_files" : {
+        "x_train": null,
+        "y_train": null,
+        "x_test": null,
+        "y_test": null
+    },
+
+    "non_split_files": {
+        "x_data":"cleaned_data.csv",
+        "y_data": "data_series_color.csv"
+    },
+
+    "preprocess_x_data": true,
+    "encode_y_data": true,
+    "name_column_label": "hdbscan_on_7D_data",
+    "test_size": 0.20,
+    "random_state_train_test_split": 42,
+    "classification": true,
+
+    "list_name_model": ["rf"],
+    "list_dict_params": [{}],
+
+
+
+    "dict_params_cross_validate" : {
+        "repeat_experience": 1,
+        "nb_cv": 5,
+        "type_cv_or_name_type_cv":"skf",
+        "metric_scoring":"accuracy",
+        "save_path_estimator": null
+    }
+}
